@@ -240,3 +240,30 @@ training and regeneration logs, configs and every benchmark (including another
 session's v1-vs-mlx-lm-draft-model run, 17:07, which did not overlap any of the
 runs above). README, model card, dataset card and the GitHub About section
 link to each other.
+
+**Drafter v2 for Qwen3-4B (H100, 17:26–19:22).** `configs/qwen3-4b-v2.yaml`:
+same recipe and prompt pool, answers written by Qwen3-4B (31.2M tokens, vLLM,
+52 min while sharing the GPU), 6,400 steps, 1.06 s/step, peak 55.0 GB, 914M
+parameters (taps 2, 18, 33). Held-out top-1 at step 6400: 68.4 / 62.4 / 59.2 /
+57.1% (1.7B: 67.5 / 62.1 / 59.6 / 57.7%). Copied to the Mac (sha256
+`6837ddee…`), published privately as `AtomicChat/woodcock-drafter-qwen3-4b`.
+
+**Benchmark 4B** (`runs/bench/qwen3-4b-v2.md`, M4 Max, same 40 prompts; mlx-lm
+55.6 tok/s). Latency: target 19.8 ms (1 token) – 21.2 ms (5); draft step 2.33 ms
+(full head), 0.90 ms (16k), 1.06 ms (32k).
+
+| decoder | tok/s | speedup | tokens/round | mean chain |
+|---|---|---|---|---|
+| full head, auto | 102.7 | 1.85× | 2.94 | 3.6 |
+| 32k, auto | 122.9 | 2.21× | 3.08 | 4.6 |
+| **16k, auto** | **124.2** | **2.23×** | **3.02** | **4.6** |
+
+Per domain (16k auto): math 2.88×, code 2.33×, multilingual 1.86×, chat 1.85×.
+The larger target gains more than 1.7B (2.00×) at the same acceptance because its
+forward pass costs 2.1× more while a draft step costs 1.5× more. Caveat: the
+drafter export (a 3-token self-check forward) ran on the Mac GPU for ~1–2 s
+during prompt ~6 of this run; the effect on the 40-prompt mean is negligible
+but the run is not perfectly clean.
+
+README, both model cards and the dataset now carry the 4B numbers; the dataset
+has the 4B training run, logs and benchmark.

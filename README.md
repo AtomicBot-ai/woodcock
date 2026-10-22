@@ -10,7 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://huggingface.co/AtomicChat/woodcock-drafter-qwen3-1.7b"><img alt="Drafter on Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20drafter-Qwen3--1.7B-yellow"></a>
+  <a href="https://huggingface.co/AtomicChat/woodcock-drafter-qwen3-1.7b"><img alt="Drafter for Qwen3-1.7B" src="https://img.shields.io/badge/%F0%9F%A4%97%20drafter-Qwen3--1.7B-yellow"></a>
+  <a href="https://huggingface.co/AtomicChat/woodcock-drafter-qwen3-4b"><img alt="Drafter for Qwen3-4B" src="https://img.shields.io/badge/%F0%9F%A4%97%20drafter-Qwen3--4B-yellow"></a>
   <a href="https://huggingface.co/datasets/AtomicChat/woodcock-training"><img alt="Training data on Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20dataset-training%20artifacts-yellow"></a>
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue">
   <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple%20Silicon-M--series-black?logo=apple">
@@ -21,13 +22,13 @@
 ---
 
 <p align="center">
-  <b>2.00×</b> faster than mlx-lm &nbsp;·&nbsp;
-  <b>2.48×</b> on math &nbsp;·&nbsp;
-  <b>2.09×</b> on code &nbsp;·&nbsp;
+  <b>2.00×</b> on Qwen3-1.7B &nbsp;·&nbsp;
+  <b>2.23×</b> on Qwen3-4B &nbsp;·&nbsp;
+  <b>up to 2.88×</b> on math &nbsp;·&nbsp;
   <b>0 quality loss</b>
 </p>
 
-<p align="center"><sub>Qwen3-1.7B on an M4 Max (48 GB), batch 1, greedy, 40 prompts across chat, code, math and 10 languages.
+<p align="center"><sub>M4 Max (48 GB), batch 1, greedy, 40 prompts across chat, code, math and 10 languages.
 Speedup is against the faster of mlx-lm and our own plain decoder.</sub></p>
 
 ---
@@ -73,9 +74,18 @@ length (4.3 tokens on average).
 
 ### Qwen3-4B
 
-| Domain | mlx-lm | Woodcock, drafter v2 |
-|---|---|---|
-| All | xxx tok/s <!-- TBD --> | **xxx tok/s · x.xx×** <!-- TBD --> |
+| Domain | mlx-lm | **Woodcock** | tokens per round |
+|---|---|---|---|
+| Math | 55.8 tok/s | **160.5 tok/s · 2.88×** | 4.03 |
+| Code | 55.6 tok/s | **129.7 tok/s · 2.33×** | 3.17 |
+| Chat | 55.2 tok/s | **102.3 tok/s · 1.85×** | 2.45 |
+| Multilingual | 56.0 tok/s | **104.3 tok/s · 1.86×** | 2.41 |
+| **All** | **55.6 tok/s** | **124.2 tok/s · 2.23×** | **3.02** |
+
+Drafter trained the same way on 80k answers written by Qwen3-4B (68.4% first-token
+agreement), 16k-token draft head, `auto` chain length (4.6 tokens on average). The
+larger target gains more: its forward pass costs 2.1× the 1.7B's (19.8 vs 9.4 ms),
+while a draft step costs only 1.5× (0.90 vs 0.61 ms).
 
 ### Where the speed comes from
 
@@ -121,7 +131,7 @@ python -m pytest -q
 | Target | Drafter | Speedup (M4 Max) |
 |---|---|---|
 | [Qwen/Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B) | [AtomicChat/woodcock-drafter-qwen3-1.7b](https://huggingface.co/AtomicChat/woodcock-drafter-qwen3-1.7b) | 2.00× |
-| [Qwen/Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B) | `AtomicChat/woodcock-drafter-qwen3-4b` (training) | x.xx× <!-- TBD --> |
+| [Qwen/Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B) | [AtomicChat/woodcock-drafter-qwen3-4b](https://huggingface.co/AtomicChat/woodcock-drafter-qwen3-4b) | 2.23× |
 
 Each drafter repository holds the weights, the token counts for the truncated draft
 head (`vocab_counts.npz`) and a model card. Download one, measure this machine's
