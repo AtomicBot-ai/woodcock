@@ -220,3 +220,12 @@ Note: the v2 benchmark ran with an uncommitted edit of `bench.py` by another
 session (16:55). It only adds an optional mlx-lm draft-model comparison
 (`mlxlm_draft`, off by default and off in this run); both baselines and the
 Woodcock decoders run the same code as in the earlier runs.
+
+**Published (private): `AtomicChat/woodcock-drafter-qwen3-1.7b`** on Hugging
+Face, commit `01f1098d91`. Contents: `woodcock export` of drafter v2 (bf16,
+sha256 `20d7e5a6…`, identical to the local export), `config.json`,
+`woodcock.json`, `vocab_counts.npz/.json` (v2 counts), Qwen's Apache-2.0
+`LICENSE`, a `NOTICE` stating what is derived from Qwen3-1.7B and the data
+sources, and a model card with the measured numbers. Weights are Apache-2.0
+(derived from Qwen3), the code stays MIT. First attempt failed with 403 (token
+without rights in the AtomicChat namespace); fixed by the owner.
