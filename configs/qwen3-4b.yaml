@@ -1,0 +1,17 @@
+include: [m4max-48gb.yaml]
+regen:
+  target: Qwen/Qwen3-4B
+  prompts: data/prompts/train.jsonl
+  out: data/regen/qwen3-4b.jsonl
+  max_new_tokens: 512
+  batch: 40             # measured: 4B at batch 24 peaked at 15 GB (1.7B at batch 64: 37.5 GB of 40.2)
+  limit: 9000
+adapt:
+  target: Qwen/Qwen3-4B
+  data: data/regen/qwen3-4b.jsonl
+  out: runs/adapt/qwen3-4b
+  init: scratch
+  lr: 1.0e-4
+  warmup: 100
+  total_steps: 2000
+  token_budget: 1536     # 4B target is ~2.3x the 1.7B in weights and activations

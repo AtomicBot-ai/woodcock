@@ -1,0 +1,17 @@
+# Apple M4 Max, 48 GB unified memory (MLX recommended working set: 40.2 GB).
+# Conservative defaults; every run logs its measured peak memory (peak_gb).
+# Budget rule: target (bf16) + drafter + activations must stay under ~32 GB so the
+# OS and other apps keep headroom; no swap, no raised wired-memory limit.
+adapt:
+  token_budget: 2048     # padded tokens per micro-batch (measured peak 21 GB on Qwen3-1.7B, B=2 x L=1024)
+  max_len: 1024
+  max_batch: 8
+  grad_accum: 4          # => ~8k tokens per optimizer step
+  ttt_steps: 4           # EAGLE-3.1: post-norm drafters need TTT 4, not 8
+  step_discount: 0.8     # TTT step j weighted 0.8**j (docs/provenance.md)
+  clip: 0.5
+  eval_every: 250
+  save_every: 250
+bench:
+  per_domain: 10
+  max_new_tokens: 256

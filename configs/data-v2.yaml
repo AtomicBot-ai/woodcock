@@ -1,0 +1,10 @@
+# Larger training pool for drafter v2 (2026-10-22): ~80k prompts, multilingual and code
+# weighted up relative to v1 (12k/5k/5k/3k), because they had the lowest acceptance.
+# Build: woodcock prompts --config configs/data-v2.yaml --out data/prompts-v2 --only train
+# The first v1 counts of every domain are a prefix of this pool (same seed, same sources first).
+prompts:
+  train:
+    chat: 36000
+    code: 18000
+    math: 14000
+    multilingual: 12000
