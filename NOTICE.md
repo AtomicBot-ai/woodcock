@@ -6,8 +6,7 @@ affiliated with or endorsed by the authors of the papers it builds on (see
 respective owners and are used only to identify the published methods.
 
 Woodcock is written from public scientific publications. This notice is not a
-statement of legal clearance. The MIT license grants no patent rights; see the
-patent note in `README.md`.
+statement of legal clearance. The MIT license grants no patent rights.
 
 Third-party components keep their own licenses (MLX and mlx-lm: MIT; Qwen3 model
 weights: Apache-2.0; datasets: see `docs/provenance.md`).
