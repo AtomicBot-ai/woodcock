@@ -10,6 +10,8 @@
 </p>
 
 <p align="center">
+  <a href="https://huggingface.co/AtomicChat/woodcock-drafter-qwen3-1.7b"><img alt="Drafter on Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20drafter-Qwen3--1.7B-yellow"></a>
+  <a href="https://huggingface.co/datasets/AtomicChat/woodcock-training"><img alt="Training data on Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20dataset-training%20artifacts-yellow"></a>
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue">
   <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple%20Silicon-M--series-black?logo=apple">
   <img alt="MLX" src="https://img.shields.io/badge/built%20on-MLX-orange">
@@ -108,22 +110,34 @@ flowchart LR
 ## Quick start
 
 ```bash
-git clone <repo-url> woodcock && cd woodcock   # TBD: public URL
+git clone https://github.com/AtomicBot-ai/woodcock.git && cd woodcock
 uv venv --python 3.12 .venv && source .venv/bin/activate
 uv pip install -e ".[test]"
 python -m pytest -q
 ```
 
-Generate with a trained drafter and a 16k-token draft head:
+### Pretrained drafters
+
+| Target | Drafter | Speedup (M4 Max) |
+|---|---|---|
+| [Qwen/Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B) | [AtomicChat/woodcock-drafter-qwen3-1.7b](https://huggingface.co/AtomicChat/woodcock-drafter-qwen3-1.7b) | 2.00× |
+| [Qwen/Qwen3-4B](https://huggingface.co/Qwen/Qwen3-4B) | `AtomicChat/woodcock-drafter-qwen3-4b` (training) | x.xx× <!-- TBD --> |
+
+Each drafter repository holds the weights, the token counts for the truncated draft
+head (`vocab_counts.npz`) and a model card. Download one, measure this machine's
+draft and verify latencies once, and generate:
 
 ```bash
+hf download AtomicChat/woodcock-drafter-qwen3-1.7b --local-dir drafters/qwen3-1.7b
+
+python scripts/time_draft_step.py --target Qwen/Qwen3-1.7B --drafter drafters/qwen3-1.7b \
+  --vocab drafters/qwen3-1.7b/vocab_counts.npz --sizes 16384 --out latency.json
+
 woodcock generate --target Qwen/Qwen3-1.7B \
-  --drafter runs/adapt/qwen3-1.7b-v2/final@runs/vocab/qwen3-1.7b-v2.npz:16384 \
-  --policy auto:runs/bench/latency-qwen3-1.7b.json \
+  --drafter drafters/qwen3-1.7b@drafters/qwen3-1.7b/vocab_counts.npz:16384 \
+  --policy auto:latency.json \
   --prompt "Explain speculative decoding in two sentences."
 ```
-
-Pretrained drafters: coming soon <!-- TBD: Hugging Face links for 1.7B and 4B -->.
 
 ### Train your own drafter
 
@@ -138,6 +152,9 @@ woodcock bench   --config configs/qwen3-1.7b.yaml --target Qwen/Qwen3-1.7B \
   --policy auto:runs/bench/latency-qwen3-1.7b.json --out runs/bench/v2.json
 ```
 
+The prompts, the regenerated answers, token counts, training logs and every benchmark
+behind the numbers above are in the dataset
+[AtomicChat/woodcock-training](https://huggingface.co/datasets/AtomicChat/woodcock-training).
 On a Mac this takes many hours; on one rented H100 the 80k answers took 21 minutes
 (vLLM, `scripts/cuda/regen_vllm.py`) and training about 1.5 hours alone on the GPU, with the same MLX code
 (`scripts/cuda/`).
